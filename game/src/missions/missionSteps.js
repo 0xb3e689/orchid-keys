@@ -1,6 +1,7 @@
 // Reusable mission steps. A mission is a list of these; each shows an objective, may place
 // markers, and reports 'done' or a failure reason from update(). The story missions and the
-// side jobs are all written with this small vocabulary.
+// side jobs are all written with this small vocabulary. Each step names its `kind` so the HUD's
+// mission tracker can show a live readout for it (distance, enemies left, target damage...).
 
 const MARK = 'step-';
 
@@ -20,6 +21,7 @@ export const wait = (seconds) => ({ text: null, enter(ctx) { ctx.state.wait = se
 /** Get behind the wheel of anything. */
 export const getAnyCar = (text = 'Get a car: walk up to one and press F.') => ({
   text,
+  kind: 'getcar',
   update(ctx) { return ctx.game.player.vehicle ? 'done' : null; },
 });
 
@@ -29,6 +31,9 @@ export const getAnyCar = (text = 'Get a car: walk up to one and press F.') => ({
  */
 export const goTo = (place, text, opts = {}) => ({
   text,
+  kind: 'goto',
+  label: opts.label ?? null,
+  noHeat: !!opts.noHeat,
   timeLimit: opts.timeLimit,
   enter(ctx) {
     const p = typeof place === 'function' ? place(ctx) : place;
@@ -54,6 +59,7 @@ export const goTo = (place, text, opts = {}) => ({
 /** Get into the car carrying `tag`. */
 export const enterTagged = (tag, text) => ({
   text,
+  kind: 'enter',
   enter(ctx) {
     const v = ctx.game.taggedVehicle(tag);
     if (v) ctx.game.markers.add(MARK + 'car', { x: v.pos.x, z: v.pos.z, kind: 'arrow', follow: v, color: 0x5aa9ff });
@@ -70,8 +76,10 @@ export const enterTagged = (tag, text) => ({
 /** Kill every hostile carrying `tag`. */
 export const eliminate = (tag, text) => ({
   text,
+  kind: 'eliminate',
   update(ctx) {
     const left = ctx.game.gangs.alive(tag);
+    ctx.state.total = Math.max(ctx.state.total ?? 0, ctx.game.gangs.members(tag).length);
     for (const e of ctx.game.gangs.members(tag)) {
       if (e.alive && !ctx.game.markers.get(MARK + 'e' + e.id)) ctx.game.markers.add(MARK + 'e' + e.id, { x: e.pos.x, z: e.pos.z, kind: 'arrow', follow: e, color: 0xff4d4d });
       if (!e.alive) ctx.game.markers.remove(MARK + 'e' + e.id);
@@ -86,6 +94,8 @@ export const eliminate = (tag, text) => ({
 /** Wreck the car carrying `tag` before it gets away. */
 export const destroyTagged = (tag, text, escapeDistance = 280) => ({
   text,
+  kind: 'destroy',
+  escapeDistance,
   enter(ctx) {
     const v = ctx.game.taggedVehicle(tag);
     if (v) ctx.game.markers.add(MARK + 'target', { x: v.pos.x, z: v.pos.z, kind: 'arrow', follow: v, color: 0xff4d4d });
@@ -104,6 +114,7 @@ export const destroyTagged = (tag, text, escapeDistance = 280) => ({
 /** Walk over a pickup. place may be a function of ctx (e.g. where a wreck stopped). */
 export const pickUp = (place, kind, text) => ({
   text,
+  kind: 'pickup',
   enter(ctx) {
     const p = typeof place === 'function' ? place(ctx) : place;
     ctx.state.pick = p;
@@ -119,6 +130,7 @@ export const pickUp = (place, kind, text) => ({
 
 export const loseWanted = (text = 'Lose the cops.') => ({
   text,
+  kind: 'lose',
   update(ctx) { return ctx.game.wanted.stars === 0 ? 'done' : null; },
 });
 
@@ -127,6 +139,7 @@ export const setWanted = (stars) => action((ctx) => ctx.game.wanted.setAtLeast(s
 /** Stay alive for `seconds`. */
 export const survive = (seconds, text) => ({
   text,
+  kind: 'survive',
   timeLimit: seconds,
   survive: true,
   update() { return null; },

@@ -1,10 +1,16 @@
 // Places to spend money: Gulfside Arms (guns, ammo, body armour), Tiko's Body Shop (repair,
-// a respray that shakes the cops, and a car lot gated by respect) and Mama Ro's laundromat,
-// the safehouse where the game is saved. Each returns menu items for the shop menu UI.
+// a respray that shakes the cops, the export list of cars to steal for him, and a car lot
+// gated by respect) and Mama Ro's laundromat, the safehouse where the game is saved. Each
+// returns menu items for the shop menu UI.
 import { LANDMARKS } from '../world/cityPlan.js';
 import { WEAPONS } from '../combat/weapons.js';
 import { VEHICLE_TYPES } from '../entities/vehicleModels.js';
 import { formatMoney } from '../core/mathUtils.js';
+
+/** Tiko ships these to a buyer overseas: steal one of each and drive it into his shop. */
+export const EXPORT_LIST = ['sandpiper', 'cab', 'bayline', 'manta', 'kestrel', 'cruiser'];
+export const EXPORT_BONUS = 5000;
+const exportPay = (type) => Math.max(900, Math.round(VEHICLE_TYPES[type].price * 0.35 / 50) * 50) + (type === 'cruiser' ? 2500 : 0);
 
 const CAR_LOT = [
   { type: 'marlin', respect: 0 },
@@ -54,6 +60,18 @@ export function shopItems(game, shopId) {
       disabled: !v || v.isPolice,
       buy: () => { game.resprayVehicle(v); game.wanted.clear(); },
     });
+    const shipped = p.exported.length;
+    if (v && !v.owned && !v.tags.has('mission')) {
+      const wanted = EXPORT_LIST.includes(v.typeId) && !p.exported.includes(v.typeId);
+      items.push({
+        label: `Export the ${v.type.name}`,
+        detail: wanted ? `On Tiko's list · ${shipped}/${EXPORT_LIST.length} shipped` : `Not on the list · still wanted: ${EXPORT_LIST.filter((t) => !p.exported.includes(t)).map((t) => VEHICLE_TYPES[t].name).join(', ') || 'nothing'}`,
+        price: 0,
+        payout: wanted ? exportPay(v.typeId) : 0,
+        disabled: !wanted,
+        buy: () => game.exportVehicle(v, exportPay(v.typeId)),
+      });
+    }
     for (const c of CAR_LOT) {
       const t = VEHICLE_TYPES[c.type];
       const owned = p.ownedCars.some((o) => o.type === c.type);
@@ -72,7 +90,7 @@ export function shopItems(game, shopId) {
     items.push({ label: 'Save game', detail: 'Also heals you', price: 0, disabled: false, buy: () => { player.heal(100); game.saveNow(); } });
     items.push({ label: 'Rest until healed', detail: `Health ${Math.round(player.health)}/100`, price: 0, disabled: player.health >= 100, buy: () => player.heal(100) });
   }
-  return items.map((it) => ({ ...it, priceText: it.price ? formatMoney(it.price) : '' }));
+  return items.map((it) => ({ ...it, priceText: it.payout ? `+${formatMoney(it.payout)}` : it.price ? formatMoney(it.price) : '' }));
 }
 
 /** Where a shop's trigger ring sits. */

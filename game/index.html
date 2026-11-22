@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Orchid Keys</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%23ff5fa2'/%3E%3Ccircle cx='8' cy='8' r='3' fill='%2333f0ff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="./css/hud.css">
 <link rel="stylesheet" href="./css/menus.css">
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
@@ -22,6 +23,8 @@
     <canvas id="hud-minimap" width="240" height="240"></canvas>
     <div id="hud-bars"><div class="bar health"><b id="hud-health"></b></div><div class="bar armor"><b id="hud-armor"></b></div></div>
   </div>
+  <div id="hud-tracker"></div>
+  <div id="hud-prompt"></div>
   <div id="hud-location"></div>
   <div id="hud-vehicle"></div>
   <div id="hud-objective"><span id="hud-objective-text"></span><span id="hud-timer"></span></div>
@@ -39,10 +42,13 @@
     <h1>ORCHID<span>KEYS</span></h1>
     <p class="tagline">Salt &amp; Neon · an island crime story</p>
   </div>
-  <div class="menu" id="start-menu">
-    <button data-action="continue" id="btn-continue">Continue</button>
-    <button data-action="new">New Game</button>
-    <button data-action="controls">Controls</button>
+  <div class="start-row">
+    <div class="menu" id="start-menu">
+      <button data-action="continue" id="btn-continue">Continue</button>
+      <button data-action="new">New Game</button>
+      <button data-action="controls">Controls</button>
+    </div>
+    <div id="save-card" class="hidden"></div>
   </div>
   <p class="footnote">Click to capture the mouse · Esc pauses</p>
 </div>

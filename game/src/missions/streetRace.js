@@ -19,6 +19,7 @@ const PRIZES = [1500, 600, 250, 0];
 function raceStep() {
   return {
     text: 'Race! Hit every checkpoint before your rivals.',
+    kind: 'race',
     enter(ctx) {
       const g = ctx.game;
       const pv = g.player.vehicle;

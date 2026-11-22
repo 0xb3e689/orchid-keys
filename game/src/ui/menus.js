@@ -1,9 +1,13 @@
-// Full-screen menus: title (continue / new game / controls), pause (resume, map, save, load,
-// controls, quit) with career stats, the island map, shop counters, and the WASTED / BUSTED
-// fades. While any of these is open the world is paused.
+// Full-screen menus: title (continue / new game / controls, with a save card showing the
+// story's chapters and completion), pause (resume, map, save, load, controls, quit) with career
+// stats, the island map, shop counters, and the WASTED / BUSTED fades. While any of these is
+// open the world is paused.
 import { formatMoney } from '../core/mathUtils.js';
-import { hasSave } from '../systems/saveGame.js';
-import { shopItems, SHOPS } from '../systems/shops.js';
+import { hasSave, readSave } from '../systems/saveGame.js';
+import { ORCHID_COUNT } from '../systems/orchidHunt.js';
+import { STORY_MISSIONS } from '../missions/storyMissions.js';
+import { EXPORT_LIST, shopItems, SHOPS } from '../systems/shops.js';
+import { VEHICLE_TYPES } from '../entities/vehicleModels.js';
 import { BLIPS } from './mapRenderer.js';
 
 const $ = (id) => document.getElementById(id);
@@ -41,7 +45,25 @@ export class Menus {
 
   showStart() {
     $('btn-continue').classList.toggle('hidden', !hasSave());
+    this.renderSaveCard(readSave());
     this.show('start-screen');
+  }
+
+  /** The Continue card: where the save left off and the story's chapter list. */
+  renderSaveCard(save) {
+    const card = $('save-card');
+    card.classList.toggle('hidden', !save);
+    if (!save) return;
+    const story = Math.min(save.story ?? 0, STORY_MISSIONS.length);
+    const next = STORY_MISSIONS[story];
+    const chapters = STORY_MISSIONS.map((m, i) => `<li class="${i < story ? 'done' : i === story ? 'next' : ''}">${m.title}</li>`).join('');
+    card.innerHTML = `
+      <span class="pct">${save.completion ?? 0}%</span>
+      <h3>Saved game</h3>
+      <div class="save-main">${next ? `Next: ${next.title}` : 'Story complete'}</div>
+      <div class="save-meta"><b>${formatMoney(save.money ?? 0)}</b> · ${save.rank ?? 'Fresh Out'} · ✿ ${(save.orchids ?? []).length}/${ORCHID_COUNT} orchids</div>
+      <h3>Salt &amp; Neon · ${story}/${STORY_MISSIONS.length}</h3>
+      <ol>${chapters}</ol>`;
   }
 
   onStart(action) {
@@ -59,7 +81,9 @@ export class Menus {
     $('pause-stats').innerHTML = `
       <div>Street rank <b>${p.rank.title}</b> (${p.respect} respect)</div>
       <div>Money <b>${formatMoney(p.money)}</b></div>
-      <div>Story <b>${p.story}/7</b> missions</div>
+      <div>Story <b>${p.story}/${STORY_MISSIONS.length}</b> missions · <b>${p.completion(STORY_MISSIONS.length, ORCHID_COUNT, EXPORT_LIST.length)}%</b> complete</div>
+      <div>Wild orchids <b>${p.orchids.length}/${ORCHID_COUNT}</b></div>
+      <div>Tiko's export list <b>${p.exported.length}/${EXPORT_LIST.length}</b>${p.exported.length < EXPORT_LIST.length ? ` · wants a <b>${VEHICLE_TYPES[EXPORT_LIST.find((t) => !p.exported.includes(t))].name}</b>` : ''}</div>
       <div>Cars stolen <b>${s.carsStolen}</b></div>
       <div>Races won <b>${s.racesWon}</b> · Deliveries <b>${p.deliveriesDone}</b></div>
       <div>Cops evaded <b>${s.copsEvaded}</b></div>

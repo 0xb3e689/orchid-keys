@@ -2,9 +2,9 @@
 // same seed, the same placements and a fixed number of simulation steps, then the world is
 // frozen so the capture sees exactly this frame.
 //   chase   - Hot Pink: fleeing OKPD on Seabreeze Boulevard at sunset (the cover)
-//   city    - on foot on the Lumen Strip with traffic and pedestrians
+//   city    - on foot on Coral Beach: traffic, pedestrians, a car to steal and a wild orchid
 //   mission - Neon Debt: a gunfight with the Brine Kings in Port Halcyon
-//   title   - the title screen over a flyover of the island
+//   title   - the title screen over a flyover of the island, with a real save on the Continue card
 import { STEP } from '../config.js';
 import { rng } from '../core/rng.js';
 import { CITY } from '../config.js';
@@ -13,8 +13,12 @@ import { STORY_MISSIONS } from '../missions/storyMissions.js';
 import { line } from '../missions/cast.js';
 import { blockCenter, roadLine } from '../world/cityPlan.js';
 import { nodeId } from '../world/roadGraph.js';
+import { writeSave } from '../systems/saveGame.js';
 
 const H = CITY.half;
+
+/** Orchids already found in the staged career (indices into ORCHID_SPOTS). */
+const FOUND_ORCHIDS = [0, 2, 5, 7, 9, 11, 13, 16, 19];
 
 function beginSession(game, { money, respect, story }) {
   rng.reseed(1234);
@@ -24,6 +28,11 @@ function beginSession(game, { money, respect, story }) {
   game.progress.money = money;
   game.progress.respect = respect;
   game.progress.story = story;
+  game.progress.orchids = FOUND_ORCHIDS.slice(0, story * 2 + 1);
+  game.progress.stats.racesWon = story > 2 ? 1 : 0;
+  game.progress.deliveriesDone = story > 1 ? 2 : 0;
+  game.progress.exported = ['sandpiper', 'cab', 'bayline'].slice(0, Math.max(0, story - 1));
+  game.orchids.sync();
   game.hud.shownMoney = money;
   game.state = 'playing';
   game.hud.show(true);
@@ -128,7 +137,7 @@ function stageCity(game) {
   beginSession(game, { money: 6720, respect: 18, story: 4 });
   // Coral Beach's hotel row, looking east toward the Lumen Strip with the sun at our backs
   const road = roadLine(8);
-  const z = road + 5.2;                  // at the kerb of the south sidewalk
+  const z = road + 5.6;                  // at the kerb of the south sidewalk, clear of the palm row
   const x = blockCenter(3) + 4;
   game.player.respawn(x, z, Math.PI / 2 + 0.3);
   game.player.giveWeapon('pistol', 48);
@@ -140,12 +149,14 @@ function stageCity(game) {
   trafficCar(game, 'sandpiper', 0xe9c46a, x + 92, road - 3, -Math.PI / 2, 11, lane(5), lane(4));
   trafficCar(game, 'bayline', 0xffffff, x + 128, road + 3, Math.PI / 2, 10, lane(4), lane(5));
   trafficCar(game, 'kestrel', 0x9b5de5, x + 170, road - 3, -Math.PI / 2, 12, lane(6), lane(5));
-  const parked = game.vehicles.spawn('marlin', 0x2a9d8f, x + 24, road + 4.7, Math.PI / 2, 'parked');
+  // a convertible at the kerb right beside Dez: the HUD offers to steal it
+  const parked = game.vehicles.spawn('manta', 0x2a9d8f, x + 3.8, road + 3.9, Math.PI / 2, 'parked');
   parked.driver = null;
   for (let i = 0; i < 16; i++) {
     const north = i % 3 === 0;
     const px = x + 5 + i * 5.5 + rng.range(-1.5, 1.5);
     const pz = north ? road - 7.6 + rng.range(-0.8, 0.8) : road + 8 + rng.range(-0.8, 1.0);
+    if (!north && Math.abs(px - (x + 12)) < 3.5) continue;   // keep the wild orchid on the sidewalk in view
     const ped = game.peds.spawnAt(px, pz);
     ped.heading = rng.chance(0.5) ? Math.PI / 2 : -Math.PI / 2;
     ped.ai.mode = 'idle';
@@ -209,6 +220,13 @@ function stageMission(game) {
 }
 
 function stageTitle(game) {
+  // a career in progress, saved through the real save path so the Continue card shows it
+  const p = game.progress;
+  p.reset();
+  Object.assign(p, { money: 18450, respect: 32, story: 3, deliveriesDone: 2, orchids: FOUND_ORCHIDS.slice(0, 7), exported: ['sandpiper', 'cab'] });
+  p.stats.racesWon = 1;
+  p.ownedCars.push({ type: 'manta', color: 0x2a9d8f });
+  writeSave(game);
   rng.reseed(77);
   game.state = 'title';
   game.time = 5.2;

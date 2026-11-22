@@ -16,8 +16,9 @@ import { WantedSystem } from './systems/wantedSystem.js';
 import { Progression } from './systems/progression.js';
 import { resolveVehicleHits } from './systems/vehicleContact.js';
 import { wireCrimes } from './systems/crimeReporter.js';
-import { SHOPS, shopSpot } from './systems/shops.js';
+import { EXPORT_BONUS, EXPORT_LIST, SHOPS, shopSpot } from './systems/shops.js';
 import { StreetPickups } from './systems/streetPickups.js';
+import { OrchidHunt } from './systems/orchidHunt.js';
 import { applySave, readSave, writeSave } from './systems/saveGame.js';
 import { Player } from './entities/playerController.js';
 import { CAR_COLORS } from './entities/vehicleModels.js';
@@ -69,6 +70,7 @@ export class Game {
     this.missions.registerActivity({ id: 'courier', landmark: 'couriers', label: 'COCONUT COURIERS', color: 0xffa94d, needsVehicle: true, create: createCourierRun });
     this.menus = new Menus(this);
     this.pickups = new StreetPickups(this);
+    this.orchids = new OrchidHunt(this);
     this.objectiveTarget = null;
     this.radioIndex = 0;
     this.shopInside = new Set();
@@ -104,6 +106,7 @@ export class Game {
   newGame() {
     this.resetWorld();
     this.progress.reset();
+    this.orchids.sync();
     const p = this.player;
     p.ammo = { fists: Infinity };
     p.weapon = 'fists';
@@ -124,6 +127,7 @@ export class Game {
     this.progress.reset();
     this.player.respawn(LANDMARKS.safehouse.x, LANDMARKS.safehouse.z + 5);
     applySave(this, data);
+    this.orchids.sync();
     this.followCam.snapBehind(this.player.heading);
     this.state = 'playing';
     this.hud.show(true);
@@ -153,7 +157,7 @@ export class Game {
   }
 
   pause() {
-    if (this.state !== 'playing') return;
+    if (this.state !== 'playing' || this.fadeTimer > 0) return;
     this.menus.openPause();
   }
 
@@ -227,6 +231,22 @@ export class Game {
     this.player.enterVehicle(fresh);
   }
 
+  /** Hand a stolen car on Tiko's export list over for cash; the full list pays a bonus. */
+  exportVehicle(v, pay) {
+    const p = this.progress;
+    if (p.exported.includes(v.typeId)) return;
+    p.exported.push(v.typeId);
+    this.player.exitVehicle(true);
+    this.vehicles.remove(v);
+    p.addMoney(pay, `Export: ${v.type.name}`);
+    p.addRespect(2);
+    if (p.exported.length === EXPORT_LIST.length) {
+      p.addMoney(EXPORT_BONUS, 'Export list complete');
+      this.hud.banner('EXPORT LIST COMPLETE', "Tiko's buyer is happy. So is your wallet.", '#ffd23f', 4);
+    }
+    this.menus.resume();
+  }
+
   deliverOwnedCar(type) {
     const lm = LANDMARKS.garage;
     const x = roadLine(2) + 3;
@@ -241,11 +261,11 @@ export class Game {
 
   setObjectiveTarget(p) { this.objectiveTarget = p ? { x: p.x, z: p.z, ref: p } : null; }
 
+  /** The bottom-centre line outside jobs; the tracker carries the rest (next chapter, orchids). */
   freeRoamObjective() {
-    const next = this.missions.storyGiverSpot();
     if (this.wanted.stars > 0) return 'You are <b>wanted</b>. Break line of sight with OKPD until the stars fade.';
-    if (next) return `Next story mission: <b>${this.missions.nextStory.title}</b> · see ${next.who} (yellow blip)`;
-    return 'Free roam: race at the <b>⚑</b>, run parcels for <b>Coconut Couriers</b>, or spend your money.';
+    if (!this.missions.nextStory) return 'Free roam: race at the <b>⚑</b>, run parcels for <b>Coconut Couriers</b>, or hunt wild orchids.';
+    return '';
   }
 
   placeShopMarkers() {
@@ -339,6 +359,7 @@ export class Game {
     if (player.dead) player.body.syncMesh();
     this.missions.update(dt);
     this.pickups.update(dt);
+    this.orchids.update(dt);
     this.dialog.update(dt);
     if (!player.dead) this.checkShops();
     if (player.vehicle && Math.abs(player.vehicle.lateralSlip ?? 0) > 4.5 && player.vehicle.absSpeed > 6) {

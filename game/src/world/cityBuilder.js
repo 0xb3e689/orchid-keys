@@ -11,7 +11,7 @@ export const SIDEWALK_HEIGHT = 0.16;
 
 function roadSegmentTexture() {
   return canvasTexture(128, 512, (ctx, w, h) => {
-    ctx.fillStyle = '#3a3c43';
+    ctx.fillStyle = '#4a4549';
     ctx.fillRect(0, 0, w, h);
     for (let i = 0; i < 2500; i++) {
       const g = 50 + Math.random() * 30;
@@ -39,7 +39,7 @@ function roadSegmentTexture() {
 
 function junctionTexture() {
   return canvasTexture(128, 128, (ctx, w, h) => {
-    ctx.fillStyle = '#3a3c43';
+    ctx.fillStyle = '#4a4549';
     ctx.fillRect(0, 0, w, h);
     for (let i = 0; i < 600; i++) {
       const g = 50 + Math.random() * 30;
@@ -75,7 +75,8 @@ function buildRoads(group) {
   const segTex = roadSegmentTexture();
   const segGeo = new THREE.PlaneGeometry(CITY.roadWidth, segLen);
   segGeo.rotateX(-Math.PI / 2);
-  const segMat = new THREE.MeshStandardMaterial({ map: segTex, roughness: 0.9 });
+  // a little sheen so the asphalt picks up the sunset instead of reading as a black hole
+  const segMat = new THREE.MeshStandardMaterial({ map: segTex, roughness: 0.8, envMapIntensity: 0.7 });
   const count = 2 * (N + 1) * N;
   const segs = new THREE.InstancedMesh(segGeo, segMat, count);
   const m = new THREE.Matrix4();
@@ -97,7 +98,7 @@ function buildRoads(group) {
 
   const jGeo = new THREE.PlaneGeometry(CITY.roadWidth, CITY.roadWidth);
   jGeo.rotateX(-Math.PI / 2);
-  const junctions = new THREE.InstancedMesh(jGeo, new THREE.MeshStandardMaterial({ map: junctionTexture(), roughness: 0.9 }), (N + 1) * (N + 1));
+  const junctions = new THREE.InstancedMesh(jGeo, new THREE.MeshStandardMaterial({ map: junctionTexture(), roughness: 0.8, envMapIntensity: 0.7 }), (N + 1) * (N + 1));
   k = 0;
   for (let i = 0; i <= N; i++) {
     for (let j = 0; j <= N; j++) {

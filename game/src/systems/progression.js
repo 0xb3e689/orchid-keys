@@ -22,7 +22,20 @@ export class Progression {
     this.raceBest = null;
     this.deliveriesDone = 0;
     this.ownedCars = [];
+    this.orchids = [];           // indices of the wild orchids found
+    this.exported = [];          // car types shipped off Tiko's export list
     this.stats = { carsStolen: 0, kills: 0, copsEvaded: 0, missionsPassed: 0, racesWon: 0, distanceDriven: 0 };
+  }
+
+  /**
+   * Share of the game done, 0-100: the story weighs most, then the orchids, Tiko's export
+   * list, races won, courier shifts and the cars in your garage.
+   */
+  completion(storyCount = 7, orchidCount = 24, exportCount = 6) {
+    const part = (n, of) => Math.min(1, n / of);
+    const pct = 55 * part(this.story, storyCount) + 18 * part(this.orchids.length, orchidCount) + 9 * part(this.exported.length, exportCount)
+      + 7 * part(this.stats.racesWon, 3) + 6 * part(this.deliveriesDone, 5) + 5 * part(this.ownedCars.length, 3);
+    return Math.floor(pct);
   }
 
   get rank() {

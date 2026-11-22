@@ -1,5 +1,5 @@
-/* In-game HUD: money, wanted stars, weapon, minimap with health and armour, objective,
-   subtitles, banners and hints, styled for a sunset palette. */
+/* In-game HUD: money, wanted stars, weapon, minimap with health and armour, the mission
+   tracker, objective, subtitles, the F prompt, banners and hints, styled for a sunset palette. */
 :root {
   --gold: #ffd23f;
   --pink: #ff5fa2;
@@ -16,7 +16,8 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #1a1220; fon
 #hud-topright { position: absolute; top: 18px; right: 26px; text-align: right; }
 #hud-weapon { font-size: 15px; letter-spacing: 1px; opacity: 0.95; }
 #hud-weapon #hud-ammo { margin-left: 10px; color: var(--gold); font-weight: bold; }
-#hud-money { font-size: 40px; font-weight: 900; color: #7dff8a; letter-spacing: 1px; -webkit-text-stroke: 1.5px #0b2f12; }
+#hud-money { font-size: 40px; font-weight: 900; color: #7dff8a; letter-spacing: 1px; -webkit-text-stroke: 1.5px #0b2f12;
+  text-shadow: 0 2px 3px rgba(0,0,0,0.75), 0 0 10px rgba(0,0,0,0.55); }
 #hud-stars { margin-top: 2px; }
 #hud-stars i { display: inline-block; width: 28px; height: 28px; margin-left: 4px; background: rgba(255,255,255,0.18);
   clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
@@ -53,7 +54,31 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #1a1220; fon
 #hud-banner.show { opacity: 1; }
 #hud-banner-title { font-size: 64px; font-weight: 900; font-style: italic; letter-spacing: 3px; -webkit-text-stroke: 2px rgba(0,0,0,0.7); }
 #hud-banner-sub { font-size: 22px; margin-top: 4px; }
-#hud-hint { position: absolute; left: 24px; top: 20px; max-width: 340px; padding: 10px 14px; font-size: 15px; line-height: 1.4;
+#hud-tracker { position: absolute; left: 22px; top: 18px; width: 340px; padding: 10px 14px 9px; font-size: 14px; line-height: 1.45;
+  background: linear-gradient(90deg, rgba(14,8,28,0.78), rgba(14,8,28,0.5)); border-left: 4px solid var(--gold); border-radius: 4px; }
+#hud-tracker:empty { display: none; }
+.trk-head { display: flex; align-items: center; gap: 9px; }
+.trk-head b { font-size: 19px; font-weight: 900; font-style: italic; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; }
+.trk-chip { font-size: 11px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; padding: 1px 7px; border-radius: 3px;
+  background: var(--pink); color: #fff; text-shadow: none; white-space: nowrap; }
+.trk-bar { display: flex; gap: 4px; margin: 6px 0 5px; }
+.trk-bar i { flex: 1; height: 5px; border-radius: 2px; background: rgba(255,255,255,0.22); }
+.trk-bar i.done { background: var(--gold); }
+.trk-bar i.now { background: linear-gradient(90deg, var(--gold), rgba(255,210,63,0.25)); box-shadow: 0 0 6px rgba(255,210,63,0.8); }
+.trk-line { font-size: 15px; }
+.trk-line b { color: var(--gold); }
+.trk-line kbd { padding: 0 5px; border: 1px solid #fff8; border-radius: 3px; background: #ffffff22; font-family: inherit; }
+.trk-sub { font-size: 13px; color: #ffd9f0; margin-top: 2px; }
+.trk-stars { color: var(--gold); letter-spacing: 1px; }
+.trk-time { color: var(--gold); font-weight: bold; }
+.trk-orchid { color: #ff6ad5; }
+#hud-prompt { position: absolute; left: 50%; top: 60%; transform: translateX(-50%); font-size: 18px; padding: 6px 14px; border-radius: 4px;
+  background: rgba(12,8,22,0.72); opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
+#hud-prompt.show { opacity: 1; }
+#hud-prompt b { color: var(--cyan); }
+#hud-prompt kbd { display: inline-block; min-width: 14px; text-align: center; padding: 0 6px; margin-right: 6px; border: 1px solid #fff; border-radius: 4px;
+  background: var(--gold); color: var(--ink); text-shadow: none; font-family: inherit; font-weight: bold; }
+#hud-hint { position: absolute; left: 24px; bottom: 318px; max-width: 340px; padding: 10px 14px; font-size: 15px; line-height: 1.4;
   background: rgba(12,8,22,0.78); border-left: 4px solid var(--pink); border-radius: 4px; opacity: 0; transition: opacity 0.3s; }
 #hud-hint.show { opacity: 1; }
 #hud-hint kbd, .controls-grid kbd { display: inline-block; padding: 0 6px; border: 1px solid #fff8; border-radius: 4px; background: #ffffff22; font-family: inherit; }

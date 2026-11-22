@@ -3,10 +3,13 @@
 // three.js build (game/vendor/three.module.min.js), plain static files a desktop browser loads
 // offline with no build step and no network request. Walk and drive the five districts of Orchid
 // Keys, steal cars, outrun a 5-star OKPD response (cruisers that ram, roadblocks, a helicopter),
-// and play Dez Navarro's seven-mission story "Salt & Neon", street races and courier runs.
+// and play Dez Navarro's seven-mission story "Salt & Neon", street races, courier runs, Tiko's
+// export list of cars to steal and a hunt for 24 wild orchids, with a HUD mission tracker,
+// minimap, shops, save/load and a title screen that shows your saved progress.
 // This program hands it in: it copies game/ and screenshots/ from beside this file to /output and
 // writes /output/dossier.json, the summary the judge reads, with the vendored make.fun library.
-// screenshots/ holds four JPEGs captured from the game's own ?shot= scenes (the first is the cover).
+// screenshots/ holds four JPEGs captured from the game's own ?shot= scenes (the first, a police
+// chase with the wanted stars, minimap and mission tracker, is the cover).
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:

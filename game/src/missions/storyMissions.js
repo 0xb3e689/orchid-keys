@@ -27,7 +27,8 @@ export const STORY_MISSIONS = [
       goTo(at('garage', 6, 0), "Drive to Tiko's Body Shop in Port Halcyon.", { vehicle: 'any', radius: 5, label: "TIKO'S" }),
       say(line('tiko', 'Dez! Is that a stolen Marlin? Never mind. Welcome home, brother.'),
         line('tiko', "Shore's people leaned on everybody. If you want the bar back, you'll need money and friends."),
-        line('tiko', 'Bring me cars, I fix them. Ro has work for you too. Press M for the map.')),
+        line('tiko', 'I have a buyer overseas. Steal the cars on my export list, drive them in, I pay cash.'),
+        line('tiko', 'Ro has work for you too. Press M for the map, Esc to check my list.')),
     ],
   },
   {

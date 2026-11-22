@@ -1,10 +1,12 @@
 // Drives the HUD overlay each frame: money ticking toward its new value, wanted stars (blinking
 // while evading), weapon and ammo, health and armour, vehicle speed and radio, district name
-// on entering a new area, objective with countdown, banners, toasts, hints and damage flash.
+// on entering a new area, objective with countdown, the mission tracker, the "F: steal this car"
+// prompt, banners, toasts, hints and damage flash.
 import { formatMoney } from '../core/mathUtils.js';
 import { on } from '../core/eventBus.js';
 import { WEAPONS } from '../combat/weapons.js';
 import { DISTRICTS, districtAt } from '../world/cityPlan.js';
+import { MissionTracker } from './missionTracker.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -17,7 +19,10 @@ export class Hud {
       objective: $('hud-objective'), objectiveText: $('hud-objective-text'), timer: $('hud-timer'),
       banner: $('hud-banner'), bannerTitle: $('hud-banner-title'), bannerSub: $('hud-banner-sub'),
       hint: $('hud-hint'), toasts: $('hud-toasts'), crosshair: $('hud-crosshair'), damage: $('hud-damage'), status: $('status'),
+      prompt: $('hud-prompt'),
     };
+    this.tracker = new MissionTracker($('hud-tracker'));
+    this.promptText = '';
     this.shownMoney = 0;
     this.bannerTimer = 0;
     this.hintTimer = 0;
@@ -86,18 +91,18 @@ export class Hud {
     }
     this.radioTimer -= dt;
 
-    const obj = game.missions.objective;
+    // during a job its objective (never the free-roam line, even while a cutscene line plays)
+    const obj = game.missions.active ? game.missions.objective : game.freeRoamObjective();
     if (obj) {
       if (this.el.objectiveText.innerHTML !== obj) this.el.objectiveText.innerHTML = obj;
       const t = game.missions.timeLeft;
       this.el.timer.textContent = t !== null ? `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}` : '';
-      this.el.objective.classList.remove('none');
     } else {
-      const free = game.freeRoamObjective();
-      this.el.objectiveText.innerHTML = free;
       this.el.timer.textContent = '';
-      this.el.objective.classList.toggle('none', !free);
     }
+    this.el.objective.classList.toggle('none', !obj);
+    this.tracker.update(game);
+    this.updatePrompt(game);
 
     // district name when crossing into a new area
     const d = districtAt(player.pos.x, player.pos.z);
@@ -112,5 +117,24 @@ export class Hud {
     if (this.hintTimer > 0 && (this.hintTimer -= dt) <= 0) this.el.hint.classList.remove('show');
     this.damageFlash = Math.max(0, this.damageFlash - dt * 1.5);
     this.el.damage.style.opacity = String(Math.max(this.damageFlash, player.health < 25 ? 0.35 + Math.sin(performance.now() / 200) * 0.15 : 0));
+  }
+
+  /** On foot next to a car: say what F will do to it. */
+  updatePrompt(game) {
+    const player = game.player;
+    let text = '';
+    if (!player.vehicle && !player.dead && !player.aiming) {
+      const b = player.body;
+      const v = game.vehicles.nearestTo(b.pos.x, b.pos.z, 4.2, (c) => !c.destroyed && !c.tags.has('noEnter'));
+      if (v) {
+        const verb = v.owned ? 'Get in your' : v.isPolice ? 'Steal the' : v.driver && v.driver !== 'player' ? 'Carjack the' : 'Steal the';
+        text = `<kbd>F</kbd> ${verb} <b>${v.type.name}</b>`;
+      }
+    }
+    if (text !== this.promptText) {
+      this.promptText = text;
+      this.el.prompt.innerHTML = text;
+      this.el.prompt.classList.toggle('show', !!text);
+    }
   }
 }

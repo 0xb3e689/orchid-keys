@@ -20,6 +20,20 @@
 .tagline { position: relative; display: inline-block; font-size: 2.6vh; letter-spacing: 0.6vh; margin-top: 2vh; padding: 0.6vh 2vh; color: #fff3d6;
   text-shadow: 0 2px 4px #0008; background: rgba(20,10,36,0.55); border-radius: 4vh; }
 #start-menu { position: relative; background: rgba(14,8,26,0.55); padding: 16px; border-radius: 6px; }
+.start-row { position: relative; display: flex; gap: 22px; align-items: stretch; }
+#save-card { width: 330px; padding: 14px 18px; border-radius: 6px; background: rgba(14,8,26,0.72); border-top: 4px solid var(--cyan); font-size: 14px; line-height: 1.5; }
+#save-card h3 { margin: 0 0 2px; font-size: 13px; letter-spacing: 2px; color: var(--cyan); text-transform: uppercase; }
+#save-card .save-main { font-size: 20px; font-weight: 900; font-style: italic; }
+#save-card .save-meta { color: #ffd9f0; margin-bottom: 6px; }
+#save-card .save-meta b { color: #7dff8a; }
+#save-card .pct { float: right; font-size: 26px; font-weight: 900; color: var(--gold); line-height: 1; }
+#save-card ol { margin: 4px 0 0; padding: 0; list-style: none; columns: 2; column-gap: 14px; font-size: 13px; }
+#save-card li { white-space: nowrap; opacity: 0.55; }
+#save-card li::before { content: "○ "; }
+#save-card li.done { opacity: 1; }
+#save-card li.done::before { content: "✓ "; color: #7dff8a; }
+#save-card li.next { opacity: 1; color: var(--gold); font-weight: bold; }
+#save-card li.next::before { content: "▸ "; }
 
 .pause-layout { display: flex; gap: 40px; align-items: flex-start; }
 #pause-stats { min-width: 300px; font-size: 16px; line-height: 1.7; background: rgba(0,0,0,0.35); padding: 14px 20px; border-radius: 6px; }

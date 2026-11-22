@@ -1,6 +1,6 @@
 [
-  { "name": "1-chase.jpg", "query": "?shot=chase", "note": "cover: Hot Pink, fleeing OKPD on Seabreeze Boulevard at sunset" },
-  { "name": "2-city.jpg", "query": "?shot=city", "note": "on foot on Coral Beach with traffic and pedestrians" },
-  { "name": "3-mission.jpg", "query": "?shot=mission", "note": "Neon Debt: gunfight with the Brine Kings in Port Halcyon" },
-  { "name": "4-title.jpg", "query": "?shot=title", "note": "title screen over a flyover of the island" }
+  { "name": "1-chase.jpg", "query": "?shot=chase", "note": "cover: Hot Pink (story 4/7), fleeing a 4-star OKPD chase on Seabreeze Boulevard at sunset, mission tracker, minimap route" },
+  { "name": "2-city.jpg", "query": "?shot=city", "note": "on foot on Coral Beach: traffic, pedestrians, a car to steal (F prompt), a wild orchid, free-roam chapter tracker" },
+  { "name": "3-mission.jpg", "query": "?shot=mission", "note": "Neon Debt (story 3/7): gunfight with the Brine Kings in Port Halcyon, hostiles-left tracker" },
+  { "name": "4-title.jpg", "query": "?shot=title", "note": "title screen over a flyover of the island, Continue card from a real save with the chapter list" }
 ]

@@ -1,5 +1,6 @@
 // Save and load to localStorage: progress, money, respect, weapons and ammo, armour, owned
-// cars and where the player stood. Every read and write is guarded so a blocked storage never
+// cars, wild orchids found and where the player stood, plus a summary (rank, completion) the
+// title screen's save card reads. Every read and write is guarded so a blocked storage never
 // breaks the game.
 import { SAVE_KEY } from '../config.js';
 
@@ -31,6 +32,10 @@ export function writeSave(game) {
     raceBest: p.raceBest,
     deliveriesDone: p.deliveriesDone,
     ownedCars: p.ownedCars,
+    orchids: p.orchids,
+    exported: p.exported,
+    rank: p.rank.title,
+    completion: p.completion(),
     stats: p.stats,
     ammo,
     weapon: player.weapon,
@@ -55,6 +60,8 @@ export function applySave(game, data) {
   p.raceBest = data.raceBest ?? null;
   p.deliveriesDone = data.deliveriesDone ?? 0;
   p.ownedCars = data.ownedCars ?? [];
+  p.orchids = Array.isArray(data.orchids) ? data.orchids.filter((i) => Number.isInteger(i)) : [];
+  p.exported = Array.isArray(data.exported) ? data.exported.filter((t) => typeof t === 'string') : [];
   Object.assign(p.stats, data.stats ?? {});
   const player = game.player;
   player.ammo = { fists: Infinity, ...(data.ammo ?? {}) };
