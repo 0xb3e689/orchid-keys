@@ -1,0 +1,44 @@
+/* Full-screen menus: the sunset title screen, pause, map, controls, shops and the
+   wasted / busted fades. */
+.screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff;
+  background: rgba(14,8,26,0.72); backdrop-filter: blur(3px); font-family: var(--hud-font); z-index: 5; }
+.screen h2 { font-size: 44px; font-style: italic; letter-spacing: 4px; margin: 0 0 18px; color: var(--gold); text-shadow: 0 3px 0 #7a2a55; }
+.menu { display: flex; flex-direction: column; gap: 10px; min-width: 280px; }
+.menu button { font: inherit; font-size: 21px; font-weight: bold; letter-spacing: 2px; padding: 11px 22px; color: #fff; cursor: pointer; text-align: left;
+  background: linear-gradient(90deg, rgba(255,95,162,0.35), rgba(255,95,162,0.05)); border: 0; border-left: 5px solid var(--pink); transition: transform 0.1s, background 0.1s; }
+.menu button:hover, .menu button:focus { transform: translateX(6px); background: linear-gradient(90deg, rgba(255,210,63,0.55), rgba(255,210,63,0.05)); border-left-color: var(--gold); outline: none; }
+.footnote { opacity: 0.7; font-size: 14px; margin-top: 22px; }
+
+#start-screen { background: linear-gradient(180deg, #2a2f7a 0%, #8a3f8f 38%, #f07a5d 62%, #ffc58a 74%, #1b6f8a 75%, #0d4d6e 100%); justify-content: flex-end; padding-bottom: 7vh; box-sizing: border-box; }
+.title-art { position: absolute; top: 7vh; left: 0; right: 0; text-align: center; }
+.title-sun { position: absolute; left: 50%; top: 38vh; width: 34vh; height: 34vh; margin-left: -17vh; border-radius: 50%;
+  background: repeating-linear-gradient(180deg, #ffe066 0 14px, #ff7a59 14px 18px); opacity: 0.9;
+  -webkit-mask: linear-gradient(180deg, #000 55%, transparent 100%); mask: linear-gradient(180deg, #000 55%, transparent 100%); }
+.title-art h1 { position: relative; margin: 0; font-size: 15vh; line-height: 0.9; font-weight: 900; font-style: italic; letter-spacing: 1vh;
+  color: #fff; text-shadow: 0 0.6vh 0 #ff5fa2, 0 1.2vh 0 #7a2a55, 0 0 4vh rgba(255,95,162,0.6); }
+.title-art h1 span { display: block; color: var(--cyan); text-shadow: 0 0.6vh 0 #2a6bff, 0 1.2vh 0 #1d2d6e, 0 0 4vh rgba(51,240,255,0.6); }
+.tagline { position: relative; font-size: 2.6vh; letter-spacing: 0.6vh; margin-top: 2vh; color: #fff3d6; text-shadow: 0 2px 4px #0008; }
+#start-menu { position: relative; background: rgba(14,8,26,0.55); padding: 16px; border-radius: 6px; }
+
+.pause-layout { display: flex; gap: 40px; align-items: flex-start; }
+#pause-stats { min-width: 300px; font-size: 16px; line-height: 1.7; background: rgba(0,0,0,0.35); padding: 14px 20px; border-radius: 6px; }
+#pause-stats b { color: var(--gold); }
+#map-canvas { width: min(84vh, 90vw); height: min(84vh, 90vw); border: 3px solid #fff; border-radius: 8px; box-shadow: 0 10px 40px #000a; }
+#map-legend { margin-top: 10px; font-size: 15px; display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+#map-legend span::before { content: "●"; margin-right: 5px; color: var(--c); }
+.controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; font-size: 18px; margin-bottom: 24px; }
+#shop-items { display: flex; flex-direction: column; gap: 8px; min-width: 520px; max-height: 60vh; overflow: auto; }
+#shop-items button { display: grid; grid-template-columns: 1fr auto; text-align: left; font: inherit; color: #fff; padding: 10px 16px; cursor: pointer;
+  background: rgba(255,255,255,0.08); border: 0; border-left: 5px solid var(--gold); }
+#shop-items button:hover:not([disabled]) { background: rgba(255,210,63,0.3); }
+#shop-items button[disabled] { opacity: 0.45; cursor: default; }
+#shop-items button b { font-size: 19px; }
+#shop-items button small { grid-column: 1; opacity: 0.8; }
+#shop-items button em { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-style: normal; font-weight: bold; color: #7dff8a; font-size: 20px; }
+#shop-money { font-size: 26px; color: #7dff8a; margin-bottom: 14px; font-weight: bold; }
+#fade-screen { background: rgba(0,0,0,0.55); }
+#fade-screen h1 { font-size: 110px; font-style: italic; letter-spacing: 6px; margin: 0; text-shadow: 0 5px 0 #000; }
+#fade-screen.wasted h1 { color: #ff4d4d; }
+#fade-screen.busted h1 { color: #5aa9ff; }
+#fade-screen.ending h1 { color: var(--gold); font-size: 80px; }
+#fade-screen p { font-size: 22px; }

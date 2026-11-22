@@ -1,0 +1,68 @@
+/* In-game HUD: money, wanted stars, weapon, minimap with health and armour, objective,
+   subtitles, banners and hints, styled for a sunset palette. */
+:root {
+  --gold: #ffd23f;
+  --pink: #ff5fa2;
+  --cyan: #33f0ff;
+  --ink: #12101a;
+  --hud-font: "Trebuchet MS", "Segoe UI", Verdana, sans-serif;
+}
+html, body { margin: 0; height: 100%; overflow: hidden; background: #1a1220; font-family: var(--hud-font); }
+#view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+.hidden { display: none !important; }
+#status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+#hud { position: fixed; inset: 0; pointer-events: none; color: #fff; text-shadow: 0 2px 3px rgba(0,0,0,0.75); }
+#hud-topright { position: absolute; top: 18px; right: 26px; text-align: right; }
+#hud-weapon { font-size: 15px; letter-spacing: 1px; opacity: 0.95; }
+#hud-weapon #hud-ammo { margin-left: 10px; color: var(--gold); font-weight: bold; }
+#hud-money { font-size: 40px; font-weight: 900; color: #7dff8a; letter-spacing: 1px; -webkit-text-stroke: 1.5px #0b2f12; }
+#hud-stars { margin-top: 2px; }
+#hud-stars i { display: inline-block; width: 28px; height: 28px; margin-left: 4px; background: rgba(255,255,255,0.18);
+  clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+#hud-stars i.on { background: var(--gold); filter: drop-shadow(0 0 6px rgba(255,210,63,0.9)); }
+#hud-stars.flash i.on { animation: starblink 0.5s steps(2) infinite; }
+@keyframes starblink { 50% { background: rgba(255,255,255,0.25); } }
+#hud-rank { font-size: 13px; color: #ffd9f0; margin-top: 2px; letter-spacing: 1px; }
+
+#hud-minimap-wrap { position: absolute; left: 24px; bottom: 22px; width: 240px; }
+#hud-minimap { width: 240px; height: 240px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.85);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.45), 0 6px 18px rgba(0,0,0,0.5); background: #0d4d6e; }
+#hud-bars { display: flex; gap: 6px; margin-top: 8px; }
+#hud-bars .bar { flex: 1; height: 9px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.5); border-radius: 3px; overflow: hidden; }
+#hud-bars .bar b { display: block; height: 100%; width: 100%; }
+#hud-bars .health b { background: linear-gradient(90deg, #3ddc84, #7dff8a); }
+#hud-bars .armor b { background: linear-gradient(90deg, #3a8bff, #7ec4ff); }
+
+#hud-location { position: absolute; right: 28px; bottom: 30px; font-size: 30px; font-weight: 900; font-style: italic;
+  color: #fff; letter-spacing: 2px; opacity: 0; transition: opacity 0.6s; -webkit-text-stroke: 1px rgba(0,0,0,0.6); }
+#hud-location.show { opacity: 1; }
+#hud-location small { display: block; font-size: 14px; color: var(--gold); font-style: normal; letter-spacing: 3px; }
+#hud-vehicle { position: absolute; right: 28px; bottom: 90px; text-align: right; font-size: 18px; }
+#hud-vehicle b { font-size: 34px; color: var(--cyan); }
+
+#hud-objective { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); max-width: 56%; text-align: center;
+  font-size: 21px; line-height: 1.35; padding: 8px 18px; background: linear-gradient(90deg, rgba(0,0,0,0), rgba(18,10,30,0.62), rgba(0,0,0,0)); }
+#hud-objective:empty, #hud-objective.none { display: none; }
+#hud-objective-text b { color: var(--gold); }
+#hud-timer { margin-left: 12px; color: var(--gold); font-weight: bold; }
+#hud-dialog { position: absolute; left: 50%; bottom: 118px; transform: translateX(-50%); max-width: 62%; text-align: center; font-size: 20px; opacity: 0; transition: opacity 0.25s; }
+#hud-dialog.show { opacity: 1; }
+#hud-dialog b { margin-right: 8px; }
+#hud-banner { position: absolute; top: 24%; left: 0; right: 0; text-align: center; opacity: 0; transition: opacity 0.4s; }
+#hud-banner.show { opacity: 1; }
+#hud-banner-title { font-size: 64px; font-weight: 900; font-style: italic; letter-spacing: 3px; -webkit-text-stroke: 2px rgba(0,0,0,0.7); }
+#hud-banner-sub { font-size: 22px; margin-top: 4px; }
+#hud-hint { position: absolute; left: 24px; top: 20px; max-width: 340px; padding: 10px 14px; font-size: 15px; line-height: 1.4;
+  background: rgba(12,8,22,0.78); border-left: 4px solid var(--pink); border-radius: 4px; opacity: 0; transition: opacity 0.3s; }
+#hud-hint.show { opacity: 1; }
+#hud-hint kbd, .controls-grid kbd { display: inline-block; padding: 0 6px; border: 1px solid #fff8; border-radius: 4px; background: #ffffff22; font-family: inherit; }
+#hud-toasts { position: absolute; right: 26px; top: 160px; text-align: right; }
+#hud-toasts div { font-size: 17px; margin-top: 6px; padding: 5px 12px; background: rgba(12,8,22,0.7); border-right: 4px solid var(--gold); animation: toastin 0.3s; }
+@keyframes toastin { from { transform: translateX(30px); opacity: 0; } }
+#hud-crosshair { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; opacity: 0; }
+#hud-crosshair.show { opacity: 1; }
+#hud-crosshair::before, #hud-crosshair::after { content: ""; position: absolute; background: #fff; box-shadow: 0 0 3px #000; }
+#hud-crosshair::before { left: 8px; top: 0; width: 2px; height: 18px; }
+#hud-crosshair::after { top: 8px; left: 0; height: 2px; width: 18px; }
+#hud-damage { position: absolute; inset: 0; box-shadow: inset 0 0 160px rgba(255,0,40,0.75); opacity: 0; transition: opacity 0.4s; }
