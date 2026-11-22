@@ -62,8 +62,8 @@ export function buildHuman(look) {
   const limb = (geo, x, y) => {
     const pivot = new THREE.Group();
     pivot.position.set(x, y, 0);
+    // limbs are too thin to matter in the shadow map; only the torso casts
     const m = new THREE.Mesh(geo, material);
-    m.castShadow = true;
     pivot.add(m);
     body.add(pivot);
     return pivot;

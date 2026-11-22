@@ -4,13 +4,19 @@
 import * as THREE from 'three';
 import { clamp, dampAngle } from '../core/mathUtils.js';
 import { animateHuman, buildHuman } from './humanModel.js';
+import { CITY } from '../config.js';
 import { isOnRoad } from '../world/cityPlan.js';
+import { onPier } from '../world/coastline.js';
 import { SIDEWALK_HEIGHT } from '../world/cityBuilder.js';
 
 let nextId = 1;
 
+const CITY_EDGE = CITY.half + CITY.roadWidth / 2;
+
+/** Height of the surface underfoot: kerbed sidewalks and lots, pier decks, else sand and asphalt. */
 export function groundHeight(x, z) {
-  return isOnRoad(x, z) ? 0 : SIDEWALK_HEIGHT;
+  if (Math.abs(x) <= CITY_EDGE && Math.abs(z) <= CITY_EDGE) return isOnRoad(x, z) ? 0 : SIDEWALK_HEIGHT;
+  return onPier(x, z) ? 0.25 : 0;
 }
 
 export class Character {

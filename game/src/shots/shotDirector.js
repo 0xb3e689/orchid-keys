@@ -73,7 +73,7 @@ function stageChase(game) {
   game.player.enterVehicle(car);
   game.player.giveWeapon('smg', 180);
   game.player.weapon = 'smg';
-  jumpToStep(game, 3, 'The alarm went off');
+  jumpToStep(game, 3, 'The alarm went off!');
   game.missions.active.vehicles.push(car);
   game.wanted.setAtLeast(4);
   game.dialog.queue([line('radio', 'All units: pink Kestrel GT westbound on Seabreeze Boulevard. Box it in!', 30)]);

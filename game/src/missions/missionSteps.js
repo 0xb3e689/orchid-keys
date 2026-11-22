@@ -43,7 +43,10 @@ export const goTo = (place, text, opts = {}) => ({
     if (opts.vehicle === 'none' && v) return null;
     if (opts.vehicle && opts.vehicle !== 'any' && opts.vehicle !== 'none' && !(v && v.tags.has(opts.vehicle))) return null;
     if (opts.slow && v && v.absSpeed > 8) return null;
-    return ctx.game.markers.inside(MARK + 'goto', pl.pos.x, pl.pos.z, v ? 1.5 : 0) ? 'done' : null;
+    const there = ctx.game.markers.inside(MARK + 'goto', pl.pos.x, pl.pos.z, v ? 1.5 : 0);
+    // some drop-offs refuse to open while OKPD is still on your tail
+    if (there && opts.noHeat && ctx.game.wanted.stars > 0) { ctx.game.hud.hint('Lose the cops first: nobody opens the door with OKPD outside.'); return null; }
+    return there ? 'done' : null;
   },
   exit(ctx) { ctx.game.markers.remove(MARK + 'goto'); ctx.game.setObjectiveTarget(null); },
 });

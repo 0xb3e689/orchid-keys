@@ -46,7 +46,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #1a1220; fon
 #hud-objective:empty, #hud-objective.none { display: none; }
 #hud-objective-text b { color: var(--gold); }
 #hud-timer { margin-left: 12px; color: var(--gold); font-weight: bold; }
-#hud-dialog { position: absolute; left: 50%; bottom: 118px; transform: translateX(-50%); max-width: 62%; text-align: center; font-size: 20px; opacity: 0; transition: opacity 0.25s; }
+#hud-dialog { position: absolute; left: 50%; bottom: 136px; transform: translateX(-50%); max-width: 62%; text-align: center; font-size: 20px; opacity: 0; transition: opacity 0.25s; }
 #hud-dialog.show { opacity: 1; }
 #hud-dialog b { margin-right: 8px; }
 #hud-banner { position: absolute; top: 24%; left: 0; right: 0; text-align: center; opacity: 0; transition: opacity 0.4s; }

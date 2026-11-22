@@ -33,8 +33,9 @@ function raceStep() {
         pv.heading = Math.PI / 2;
         pv.vx = pv.vz = 0;
       }
+      const grid = [[0, -3], [-9, 3], [-9, -3]];
       RIVALS.forEach((r, i) => {
-        const v = g.spawnMissionVehicle(r.type, r.color, start.x - 7 - (i % 2) * 7, start.z + (i % 2 ? 3 : -3), Math.PI / 2, 'racer' + i, false);
+        const v = g.spawnMissionVehicle(r.type, r.color, start.x + grid[i][0], start.z + grid[i][1], Math.PI / 2, 'racer' + i, false);
         v.driver = 'racer';
         const agent = new DrivingAgent(v, rng.next);
         agent.routeTo(RACE_CHECKPOINTS[0].x, RACE_CHECKPOINTS[0].z);
@@ -72,7 +73,9 @@ function raceStep() {
         if (r.done || r.v.destroyed || r.v.driver !== 'racer') continue;
         const lead = r.cp - s.cp;
         const top = 34 * r.skill * (lead > 0 ? 0.88 : lead < 0 ? 1.12 : 1);
-        if (r.agent.updateRoute(dt, g.vehicles.list.filter((v) => v !== r.v && v.role === 'traffic'), top, true, 10)) {
+        // rivals brake for civilians, never for the player: they will trade paint instead
+        const traffic = g.vehicles.list.filter((v) => v !== r.v && v.role === 'traffic' && v.driver !== 'player');
+        if (r.agent.updateRoute(dt, traffic, top, true, 10)) {
           r.cp++;
           if (r.cp >= RACE_CHECKPOINTS.length) { r.done = true; s.finished.push(r.name); r.v.controls.throttle = 0; r.v.controls.handbrake = true; }
           else r.agent.routeTo(RACE_CHECKPOINTS[r.cp].x, RACE_CHECKPOINTS[r.cp].z);
