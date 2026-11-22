@@ -43,7 +43,13 @@ export class Input {
   }
 
   requestLock() {
-    if (this.canvas.requestPointerLock) this.canvas.requestPointerLock();
+    if (!this.canvas.requestPointerLock) return;
+    try {
+      const p = this.canvas.requestPointerLock();
+      if (p && p.catch) p.catch(() => {});
+    } catch {
+      // pointer lock unavailable (embedded or headless): mouse-look simply stays off
+    }
   }
 
   releaseLock() {

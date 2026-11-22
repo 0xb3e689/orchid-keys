@@ -9,11 +9,11 @@
 .menu button:hover, .menu button:focus { transform: translateX(6px); background: linear-gradient(90deg, rgba(255,210,63,0.55), rgba(255,210,63,0.05)); border-left-color: var(--gold); outline: none; }
 .footnote { opacity: 0.7; font-size: 14px; margin-top: 22px; }
 
-#start-screen { background: linear-gradient(180deg, #2a2f7a 0%, #8a3f8f 38%, #f07a5d 62%, #ffc58a 74%, #1b6f8a 75%, #0d4d6e 100%); justify-content: flex-end; padding-bottom: 7vh; box-sizing: border-box; }
-.title-art { position: absolute; top: 7vh; left: 0; right: 0; text-align: center; }
-.title-sun { position: absolute; left: 50%; top: 38vh; width: 34vh; height: 34vh; margin-left: -17vh; border-radius: 50%;
-  background: repeating-linear-gradient(180deg, #ffe066 0 14px, #ff7a59 14px 18px); opacity: 0.9;
-  -webkit-mask: linear-gradient(180deg, #000 55%, transparent 100%); mask: linear-gradient(180deg, #000 55%, transparent 100%); }
+/* the title floats over a live helicopter flyover of the island */
+#start-screen { background: linear-gradient(180deg, rgba(31,24,80,0.62) 0%, rgba(90,40,110,0.22) 34%, rgba(0,0,0,0) 52%, rgba(14,8,26,0.72) 100%);
+  backdrop-filter: none; justify-content: flex-end; padding-bottom: 7vh; box-sizing: border-box; }
+.title-art { position: absolute; top: 6vh; left: 0; right: 0; text-align: center; }
+.title-sun { display: none; }
 .title-art h1 { position: relative; margin: 0; font-size: 15vh; line-height: 0.9; font-weight: 900; font-style: italic; letter-spacing: 1vh;
   color: #fff; text-shadow: 0 0.6vh 0 #ff5fa2, 0 1.2vh 0 #7a2a55, 0 0 4vh rgba(255,95,162,0.6); }
 .title-art h1 span { display: block; color: var(--cyan); text-shadow: 0 0.6vh 0 #2a6bff, 0 1.2vh 0 #1d2d6e, 0 0 4vh rgba(51,240,255,0.6); }

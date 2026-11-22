@@ -4,16 +4,16 @@ import * as THREE from 'three';
 
 /** Per-style window layout: spacing (m), window fill, glass tint, lit-room chance, storefront. */
 export const FACADE_STYLES = {
-  tower: { cell: [3.2, 3.6], fill: [0.78, 0.7], glass: 0x9fc4e8, lit: 0.22, store: 1, reflect: 0.85 },
-  deco: { cell: [3.6, 3.4], fill: [0.42, 0.55], glass: 0x6fb8c9, lit: 0.3, store: 1, reflect: 0.5 },
-  club: { cell: [4.0, 3.8], fill: [0.5, 0.45], glass: 0xff7ad9, lit: 0.55, store: 1, reflect: 0.4 },
-  house: { cell: [3.4, 3.0], fill: [0.36, 0.42], glass: 0x7a9ab8, lit: 0.35, store: 0, reflect: 0.3 },
-  warehouse: { cell: [7.0, 6.0], fill: [0.55, 0.2], glass: 0x7f8a8f, lit: 0.1, store: 0, reflect: 0.2 },
+  tower: { cell: [3.0, 3.6], fill: [0.88, 0.66], glass: 0x2f4f72, lit: 0.12, store: 1, reflect: 0.7 },
+  deco: { cell: [3.6, 3.4], fill: [0.4, 0.5], glass: 0x2f6276, lit: 0.18, store: 1, reflect: 0.4 },
+  club: { cell: [4.0, 3.8], fill: [0.46, 0.38], glass: 0x3a2448, lit: 0.22, store: 1, reflect: 0.3 },
+  house: { cell: [3.4, 3.0], fill: [0.36, 0.42], glass: 0x3d5368, lit: 0.25, store: 0, reflect: 0.25 },
+  warehouse: { cell: [7.0, 6.0], fill: [0.55, 0.2], glass: 0x4a5257, lit: 0.06, store: 0, reflect: 0.15 },
 };
 
 export function createFacadeMaterial(styleName) {
   const s = FACADE_STYLES[styleName];
-  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.82, metalness: 0.05 });
+  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.82, metalness: 0.05, envMapIntensity: 0.6 });
   const glass = new THREE.Color(s.glass);
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uCell = { value: new THREE.Vector2(s.cell[0], s.cell[1]) };
@@ -77,7 +77,7 @@ export function createFacadeMaterial(styleName) {
       .replace(
         '#include <roughnessmap_fragment>',
         `#include <roughnessmap_fragment>
-        roughnessFactor = mix(roughnessFactor, 0.12, facadeWindow * uReflect);`,
+        roughnessFactor = mix(roughnessFactor, 0.22, facadeWindow * uReflect);`,
       )
       .replace(
         '#include <metalnessmap_fragment>',
@@ -87,7 +87,7 @@ export function createFacadeMaterial(styleName) {
       .replace(
         '#include <emissivemap_fragment>',
         `#include <emissivemap_fragment>
-        totalEmissiveRadiance += facadeLit * vec3(1.0, 0.72, 0.42) * 0.9;`,
+        totalEmissiveRadiance += facadeLit * vec3(1.0, 0.7, 0.4) * 0.55;`,
       );
   };
   mat.customProgramCacheKey = () => 'facade-' + styleName;

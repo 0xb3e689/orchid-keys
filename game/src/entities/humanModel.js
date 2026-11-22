@@ -20,7 +20,7 @@ export function randomLook(rnd = outfitRng) {
 }
 
 export const LOOKS = {
-  player: { skin: 0xc68642, shirt: 0xf7f3e8, pants: 0x3d405b, hair: 0x1b1b1b, hat: null, accent: 0xff5fa2 },
+  player: { skin: 0x8d5524, shirt: 0xf7f3e8, pants: 0x3d405b, hair: 0x1b1b1b, hat: null, accent: 0xff5fa2 },
   cop: { skin: 0xe0ac69, shirt: 0x1d3557, pants: 0x14213d, hair: 0x1b1b1b, hat: 0x14213d },
   goon: { skin: 0xc68642, shirt: 0x2b2d42, pants: 0x111111, hair: 0x1b1b1b, hat: null, accent: 0xd4af37 },
   courier: { skin: 0xf1c27d, shirt: 0xffa94d, pants: 0x2b2d42, hair: 0x3b2314, hat: 0xffa94d },
@@ -35,7 +35,7 @@ function parts(look) {
     box(0.46, 0.14, 0.28, 0, 0.98, 0, look.pants),
     box(0.14, 0.12, 0.14, 0, 1.66, 0, look.skin),
     sphere(0.15, 0, 1.82, 0, look.skin, 8, 6),
-    box(0.3, 0.1, 0.3, 0, 1.96, -0.02, look.hair),
+    sphere(0.158, 0, 1.86, -0.025, look.hair, 8, 6),
   ];
   if (look.accent) torso.push(box(0.08, 0.5, 0.31, 0.12, 1.32, 0.005, look.accent));
   if (look.hat) {

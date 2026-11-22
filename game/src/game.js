@@ -17,6 +17,7 @@ import { Progression } from './systems/progression.js';
 import { resolveVehicleHits } from './systems/vehicleContact.js';
 import { wireCrimes } from './systems/crimeReporter.js';
 import { SHOPS, shopSpot } from './systems/shops.js';
+import { StreetPickups } from './systems/streetPickups.js';
 import { applySave, readSave, writeSave } from './systems/saveGame.js';
 import { Player } from './entities/playerController.js';
 import { CAR_COLORS } from './entities/vehicleModels.js';
@@ -67,6 +68,7 @@ export class Game {
     this.missions.registerActivity({ id: 'race', landmark: 'raceStart', label: 'SUNSET SPRINT', color: 0xffe066, needsVehicle: true, create: createStreetRace });
     this.missions.registerActivity({ id: 'courier', landmark: 'couriers', label: 'COCONUT COURIERS', color: 0xffa94d, needsVehicle: true, create: createCourierRun });
     this.menus = new Menus(this);
+    this.pickups = new StreetPickups(this);
     this.objectiveTarget = null;
     this.radioIndex = 0;
     this.shopInside = new Set();
@@ -281,8 +283,11 @@ export class Game {
 
   mapGivers() {
     const out = [];
-    for (const lm of Object.values(LANDMARKS)) if (lm.blip) out.push({ x: lm.x, z: lm.z, blip: BLIPS[lm.blip], important: false });
     const story = this.missions.storyGiverSpot();
+    for (const lm of Object.values(LANDMARKS)) {
+      if (!lm.blip || (story && story.x === lm.x && story.z === lm.z)) continue;
+      out.push({ x: lm.x, z: lm.z, blip: BLIPS[lm.blip], important: false });
+    }
     if (story) out.push({ x: story.x, z: story.z, blip: { letter: '!', color: '#ffd23f' }, important: true });
     return out;
   }
@@ -332,6 +337,7 @@ export class Game {
     resolveVehicleHits(this.vehicles.list, this.characters());
     if (player.dead) player.body.syncMesh();
     this.missions.update(dt);
+    this.pickups.update(dt);
     this.dialog.update(dt);
     if (!player.dead) this.checkShops();
     if (player.vehicle && Math.abs(player.vehicle.lateralSlip ?? 0) > 4.5 && player.vehicle.absSpeed > 6) {
@@ -373,6 +379,11 @@ export class Game {
     const a = this.time * 0.035 + 2.2;
     this.camera.position.set(Math.cos(a) * 260, 95, Math.sin(a) * 260 + 60);
     this.camera.lookAt(0, 25, 120);
+    // keep the streets under the camera alive
+    const focus = { x: Math.cos(a) * 150, z: Math.sin(a) * 150 + 80 };
+    this.traffic.update(dt, focus, this.vehicles.list);
+    this.vehicles.update(dt);
+    this.peds.update(dt, focus);
   }
 
   render() {

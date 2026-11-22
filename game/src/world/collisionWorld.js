@@ -103,7 +103,7 @@ export class CollisionWorld {
    * First hit distance of a 3D ray against the boxes (slab test), or Infinity.
    * Origin {x,y,z}, normalised dir {x,y,z}.
    */
-  raycast(o, d, maxDist) {
+  raycast(o, d, maxDist, ignoreThin = false) {
     let best = Infinity;
     const steps = Math.ceil(maxDist / CELL) + 1;
     const seen = new Set();
@@ -114,6 +114,8 @@ export class CollisionWorld {
       for (const b of this.nearby(px, pz, CELL)) {
         if (seen.has(b.id)) continue;
         seen.add(b.id);
+        // palm trunks and lamp posts never push the camera in
+        if (ignoreThin && (b.tag === 'palm' || b.tag === 'lamp')) continue;
         const hit = rayBox(o, d, b);
         if (hit < best) best = hit;
       }

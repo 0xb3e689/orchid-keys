@@ -4,7 +4,8 @@
 import * as THREE from 'three';
 import { PALETTE } from '../config.js';
 
-export const SUN_DIRECTION = new THREE.Vector3(-0.55, 0.26, 0.8).normalize();
+/** Toward the sun: low in the west-south-west, setting over the sea beyond Port Halcyon. */
+export const SUN_DIRECTION = new THREE.Vector3(-0.78, 0.2, 0.58).normalize();
 
 function createSkyDome() {
   const geo = new THREE.SphereGeometry(1400, 32, 16);
@@ -17,7 +18,7 @@ function createSkyDome() {
       mid: { value: new THREE.Color(PALETTE.skyMid) },
       horizon: { value: new THREE.Color(PALETTE.horizon) },
       sunDir: { value: SUN_DIRECTION },
-      sunColor: { value: new THREE.Color(0xfff1c8) },
+      sunColor: { value: new THREE.Color(0xffd27a) },
     },
     vertexShader: `varying vec3 vDir;
       void main() {
@@ -39,7 +40,8 @@ function createSkyDome() {
         vec3 col = mix(horizon, mid, smoothstep(0.0, 0.18, h));
         col = mix(col, top, smoothstep(0.15, 0.75, h));
         // warm glow toward the sun, cooler violet away from it
-        col += vec3(1.0, 0.55, 0.25) * pow(sunAmt, 6.0) * 0.55;
+        col += vec3(1.0, 0.45, 0.15) * pow(sunAmt, 8.0) * 0.5;
+        col += vec3(1.0, 0.62, 0.3) * pow(sunAmt, 90.0) * 0.9;
         col = mix(col, col * vec3(0.85, 0.8, 1.05), (1.0 - sunAmt) * 0.35);
         // streaky cirrus clouds lit from below
         vec2 uv = d.xz / (d.y + 0.12) * 1.6;
@@ -47,7 +49,7 @@ function createSkyDome() {
         c = smoothstep(0.6, 0.9, c) * smoothstep(0.03, 0.22, h) * (1.0 - smoothstep(0.45, 0.85, h));
         col = mix(col, vec3(1.0, 0.5, 0.52) * (0.75 + sunAmt * 0.45), c * 0.45);
         // sun disc
-        col += sunColor * smoothstep(0.9985, 0.9995, sunAmt) * 2.0;
+        col += sunColor * smoothstep(0.9988, 0.9996, sunAmt) * 1.4;
         // below the horizon: sea haze
         col = mix(col, horizon * 0.9, smoothstep(0.0, -0.05, d.y));
         gl_FragColor = vec4(col, 1.0);

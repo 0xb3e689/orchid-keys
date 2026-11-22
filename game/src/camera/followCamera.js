@@ -56,12 +56,14 @@ export class FollowCamera {
       fov = aiming ? 55 : 66;
       this.target.set(player.body.pos.x, player.body.pos.y + height, player.body.pos.z);
     }
-    if (this.override) {
-      wantDist = this.override.distance;
-      this.pitch = this.override.pitch;
-    }
     this.distance = damp(this.distance, wantDist, 5, dt);
     this.camera.fov = damp(this.camera.fov, fov, 4, dt);
+    if (this.override) {
+      // a fixed framing (used by the screenshot director)
+      this.distance = this.override.distance;
+      this.pitch = this.override.pitch;
+      this.camera.fov = this.override.fov ?? fov;
+    }
     this.camera.updateProjectionMatrix();
 
     const cp = Math.cos(this.pitch);
@@ -74,7 +76,7 @@ export class FollowCamera {
     const pivot = tmp.set(this.target.x + rx, this.target.y + (v ? 0.9 : 0.15), this.target.z + rz);
     dir.set(-fx, -fy, -fz).normalize();
     let dist = this.distance;
-    const hit = collision.raycast(pivot, dir, dist);
+    const hit = collision.raycast(pivot, dir, dist, true);
     if (hit < dist) dist = Math.max(0.8, hit - 0.4);
     const cam = this.camera.position;
     cam.set(pivot.x + dir.x * dist, Math.max(0.4, pivot.y + dir.y * dist), pivot.z + dir.z * dist);

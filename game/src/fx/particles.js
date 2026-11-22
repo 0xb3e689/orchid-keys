@@ -103,7 +103,7 @@ export class ParticleFx {
   }
 
   tyreSmoke(x, z) {
-    this.spawn(this.smoke, x, 0.3, z, (Math.random() - 0.5), 0.6 + Math.random() * 0.6, (Math.random() - 0.5), 1.4, 0.6, 2.6, 0.85, 0.85, 0.85, 0.35, -0.5, 0.6);
+    this.spawn(this.smoke, x, 0.3, z, (Math.random() - 0.5), 0.6 + Math.random() * 0.6, (Math.random() - 0.5), 1.4, 0.6, 2.6, 1, 0.97, 0.94, 0.22, -0.5, 0.6);
   }
 
   engineSmoke(x, y, z, fire) {
