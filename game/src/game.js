@@ -305,6 +305,7 @@ export class Game {
       zoom: p.vehicle ? 0.62 + Math.max(0, 0.3 - Math.abs(p.vehicle.speed) * 0.01) : 0.95,
       police, enemies, target, givers: this.mapGivers(), time: this.time,
       route: this.objectiveTarget,
+      search: this.wanted.evading ? { ...this.police.lastSeenAt, r: 80 + this.wanted.stars * 15 } : null,
     };
   }
 
@@ -332,7 +333,7 @@ export class Game {
     this.traffic.update(dt, focus, [...this.vehicles.list, player.body, ...this.peds.list.filter((p) => p.alive && !p.isDown && p.ai?.mode !== 'flee').slice(0, 30)]);
     this.police.update(dt);
     this.gangs.update(dt);
-    this.peds.update(dt, focus);
+    this.peds.update(dt, focus, player);
     this.vehicles.update(dt);
     resolveVehicleHits(this.vehicles.list, this.characters());
     if (player.dead) player.body.syncMesh();

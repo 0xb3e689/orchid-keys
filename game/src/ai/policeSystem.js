@@ -208,6 +208,7 @@ export class PoliceSystem {
     }
 
     const seen = stars > 0 && this.computeSeen(player);
+    if (seen || !this.lastSeenAt) this.lastSeenAt = { x: player.pos.x, z: player.pos.z };
     this.wanted.update(dt, seen);
   }
 

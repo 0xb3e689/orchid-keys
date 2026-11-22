@@ -65,6 +65,8 @@ export class WantedSystem {
 
   refresh(before) {
     this.stars = Math.max(this.minStars, this.starsForHeat(this.heat));
+    if (before === 0) this.peakStars = 0;
+    this.peakStars = Math.max(this.peakStars ?? 0, this.stars);
     if (this.stars > before) emit('wantedUp', { stars: this.stars });
   }
 

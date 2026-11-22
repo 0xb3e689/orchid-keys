@@ -126,6 +126,17 @@ export class MapRenderer {
     g.rotate(rot);
     g.scale(zoom, zoom);
     g.drawImage(this.base, -info.x - ORIGIN, -info.z - ORIGIN);
+    if (info.search) {
+      // the OKPD search area while the stars blink
+      const blue = Math.floor(info.time * 2) % 2 === 0;
+      g.fillStyle = blue ? 'rgba(42,107,255,0.22)' : 'rgba(255,42,42,0.22)';
+      g.strokeStyle = blue ? 'rgba(42,107,255,0.8)' : 'rgba(255,42,42,0.8)';
+      g.lineWidth = 3 / zoom;
+      g.beginPath();
+      g.arc(info.search.x - info.x, info.search.z - info.z, info.search.r, 0, Math.PI * 2);
+      g.fill();
+      g.stroke();
+    }
     if (info.route) {
       g.strokeStyle = '#ffd23f';
       g.lineWidth = 4 / zoom;

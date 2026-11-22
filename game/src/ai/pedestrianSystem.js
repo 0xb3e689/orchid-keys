@@ -81,7 +81,25 @@ export class PedestrianSystem {
     return { x: blockCenter(ai.bx) + cx * RING, z: blockCenter(ai.bz) + cz * RING };
   }
 
-  update(dt, focus) {
+  /** People in front of a raised gun freeze with their hands up, then bolt. */
+  reactToAim(player) {
+    if (!player || !player.aiming || player.vehicle) return;
+    const fx = Math.sin(player.body.heading);
+    const fz = Math.cos(player.body.heading);
+    for (const p of this.list) {
+      if (!p.alive || p.isDown || !p.ai || p.ai.mode === 'flee' || p.ai.mode === 'handsUp') continue;
+      const dx = p.pos.x - player.pos.x;
+      const dz = p.pos.z - player.pos.z;
+      const d = Math.hypot(dx, dz);
+      if (d > 16 || (dx * fx + dz * fz) / (d || 1) < 0.94) continue;
+      p.ai.mode = 'handsUp';
+      p.ai.timer = rng.range(1.5, 3);
+      p.ai.threat = { x: player.pos.x, z: player.pos.z };
+    }
+  }
+
+  update(dt, focus, player = null) {
+    this.reactToAim(player);
     let alive = 0;
     for (const p of [...this.list]) {
       const d = Math.hypot(p.pos.x - focus.x, p.pos.z - focus.z);
@@ -105,6 +123,14 @@ export class PedestrianSystem {
   think(p, dt) {
     const ai = p.ai;
     if (p.isDown) { p.moveX = p.moveZ = 0; return; }
+    p.pose = ai.mode === 'handsUp' ? 'hands-up' : 'normal';
+    if (ai.mode === 'handsUp') {
+      p.moveX = p.moveZ = 0;
+      p.heading = Math.atan2(ai.threat.x - p.pos.x, ai.threat.z - p.pos.z);
+      ai.timer -= dt;
+      if (ai.timer <= 0) { ai.mode = 'flee'; ai.timer = rng.range(5, 8); }
+      return;
+    }
     if (ai.mode === 'flee' && ai.threat) {
       ai.timer -= dt;
       const dx = p.pos.x - ai.threat.x;

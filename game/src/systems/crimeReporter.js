@@ -78,5 +78,10 @@ export function wireCrimes(game) {
     }
   });
 
-  on('wantedEvaded', () => { game.progress.stats.copsEvaded++; game.hud.toast('You lost the cops.'); });
+  on('wantedEvaded', () => {
+    game.progress.stats.copsEvaded++;
+    game.hud.toast('You lost the cops.');
+    // shaking a serious tail earns a reputation
+    if (game.wanted.peakStars >= 3) game.progress.addRespect(game.wanted.peakStars - 2);
+  });
 }

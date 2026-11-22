@@ -17,7 +17,8 @@
 .title-art h1 { position: relative; margin: 0; font-size: 15vh; line-height: 0.9; font-weight: 900; font-style: italic; letter-spacing: 1vh;
   color: #fff; text-shadow: 0 0.6vh 0 #ff5fa2, 0 1.2vh 0 #7a2a55, 0 0 4vh rgba(255,95,162,0.6); }
 .title-art h1 span { display: block; color: var(--cyan); text-shadow: 0 0.6vh 0 #2a6bff, 0 1.2vh 0 #1d2d6e, 0 0 4vh rgba(51,240,255,0.6); }
-.tagline { position: relative; font-size: 2.6vh; letter-spacing: 0.6vh; margin-top: 2vh; color: #fff3d6; text-shadow: 0 2px 4px #0008; }
+.tagline { position: relative; display: inline-block; font-size: 2.6vh; letter-spacing: 0.6vh; margin-top: 2vh; padding: 0.6vh 2vh; color: #fff3d6;
+  text-shadow: 0 2px 4px #0008; background: rgba(20,10,36,0.55); border-radius: 4vh; }
 #start-menu { position: relative; background: rgba(14,8,26,0.55); padding: 16px; border-radius: 6px; }
 
 .pause-layout { display: flex; gap: 40px; align-items: flex-start; }
